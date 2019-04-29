@@ -20,20 +20,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_executable(${PROJECT_NAME}
         src/main.c
+        src/Constants.c
         src/Logger.c
+        src/Utils.c
         src/StateMessage.c
         src/StateMachine.c
         src/test/InGameRenderingState.c
+        src/test/SongSelectState.c
         )
 
 target_link_libraries(${PROJECT_NAME}
         vita2d
         png
         z
-        mpg123
-        vorbisfile
-        vorbis
-        ogg
+        m
         SceIofilemgr_stub
         SceDisplay_stub
         SceCtrl_stub
@@ -43,7 +43,6 @@ target_link_libraries(${PROJECT_NAME}
         SceCommonDialog_stub
         SceTouch_stub
         SceHid_stub
-        m
 )
 
 vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})

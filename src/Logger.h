@@ -8,10 +8,10 @@
 #include <psp2/rtc.h>
 #include <psp2/types.h>
 
+#include "Constants.h"
+
 /** SceIoOpen returns a SceUID, which is a typedef for int. See the VitaSDK docs. */
 typedef SceUID Logger;
-
-extern const char *DEFAULT_LOG_PATH;
 
 void initializeLogger();
 void writeToLogger(const char *message);

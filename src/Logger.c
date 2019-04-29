@@ -1,10 +1,5 @@
 #include "Logger.h"
 
-// =========
-// Constants
-// =========
-const char *DEFAULT_LOG_PATH = "ux0:/data/tjapvita/logs";
-
 // ================
 // Static Variables
 // ================

@@ -1,6 +1,5 @@
 #include "InGameRenderingState.h"
 
-//Lane start Rect: x = 250, y = 148
 State inGameRenderingState = { .startFunction = &inGameRenderingState_Start,
                                .updateFunction = &inGameRenderingState_Update,
                                .endFunction = &inGameRenderingState_End,
