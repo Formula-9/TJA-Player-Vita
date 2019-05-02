@@ -9,10 +9,7 @@
 
 int main() {
     initializeLogger();
-    TjaFile *file = makeTjaFileInstance("ux0:/data/tjapvita/tja/Namco Original/Xa/Xa.tja");
-    logTjaFile(file);
-    file->filePath = NULL;
-    freeTjaFile(file);
+    findAllTjaFiles(DEFAULT_TJA_PATH, 0);
     exitLogger();
     sceKernelExitProcess(0);
     return 0;

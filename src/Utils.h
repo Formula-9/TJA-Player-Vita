@@ -7,6 +7,7 @@
 
 #include "Constants.h"
 #include "Logger.h"
+#include "TjaFile.h"
 
 void findAllTjaFiles(const char *folderPath, int depth_level);
 const char *getLastFourCharactersOfString(const char *string);

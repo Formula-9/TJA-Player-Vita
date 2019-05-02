@@ -13,7 +13,10 @@ void findAllTjaFiles(const char *folderPath, int depth_level) {
         SceIoDirent dirEntry;
         while (sceIoDread(folderFileDescriptor, &dirEntry) > 0) {
             if (isTjaFile(dirEntry)) {
-                //char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
+                char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
+                TjaFile *tja = makeTjaFileInstance(pathToTja);
+                logTjaFile(tja);
+                freeTjaFile(tja);
             } else if (isFolderAndNotParentOrCurrent(dirEntry) && depth_level < MAX_DEPTH_LEVEL) {
                 char *newPath = makePathFromDirAndString(folderPath, dirEntry.d_name);
                 findAllTjaFiles(newPath, depth_level + 1);
