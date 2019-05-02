@@ -8,7 +8,7 @@
 #include "Constants.h"
 #include "Logger.h"
 
-void logAllTjaFiles(const char *folderPath, int depth_level);
+void findAllTjaFiles(const char *folderPath, int depth_level);
 const char *getLastFourCharactersOfString(const char *string);
 int isTjaFile(SceIoDirent dirEntry);
 int isFolderAndNotParentOrCurrent(SceIoDirent dirEntry);

@@ -7,22 +7,23 @@
  * @param folderPath The folder in which the application will look for TJA files.
  * @param depth_level The current depth_level. For most cases, just provide zero.
  */
-void logAllTjaFiles(const char *folderPath, int depth_level) {
+void findAllTjaFiles(const char *folderPath, int depth_level) {
     SceUID folderFileDescriptor = sceIoDopen(folderPath);
     if (folderFileDescriptor >= 0) {
         SceIoDirent dirEntry;
         while (sceIoDread(folderFileDescriptor, &dirEntry) > 0) {
             if (isTjaFile(dirEntry)) {
-                //TODO: What to do with the TJA ?
+                //char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
             } else if (isFolderAndNotParentOrCurrent(dirEntry) && depth_level < MAX_DEPTH_LEVEL) {
                 char *newPath = makePathFromDirAndString(folderPath, dirEntry.d_name);
-                logAllTjaFiles(newPath, depth_level + 1);
+                findAllTjaFiles(newPath, depth_level + 1);
                 free(newPath);
             }
         }
         sceIoDclose(folderFileDescriptor);
     }
 }
+
 
 /**
  * Determines if a directory entry is a TJA file or not.
@@ -76,8 +77,10 @@ char *makePathFromDirAndString(const char *basePath, const char *extensionPath) 
     int basePathLength = strlen(basePath);
     int extensionPathLength = strlen(extensionPath);
     char *buffer = malloc(basePathLength + extensionPathLength + 2);
-    strcpy(buffer, basePath);
-    buffer[basePathLength] = '/';
-    strcpy(buffer + basePathLength + 1, extensionPath);
+    if (buffer) {
+        strcpy(buffer, basePath);
+        buffer[basePathLength] = '/';
+        strcpy(buffer + basePathLength + 1, extensionPath);
+    } else { writeToLogger("Error: couldn't allocate memory to create a string!"); }
     return buffer;
 }
