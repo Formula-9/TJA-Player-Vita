@@ -1,11 +1,12 @@
 #include <psp2/kernel/processmgr.h>
+#include <psp2/io/fcntl.h>
 
-#include "Logger.h"
+#include "../include/Logger.h"
 //#include "StateMachine.h"
 //#include "StateMachineCommand.h"
 //#include "test/InGameRenderingState.h"
-#include "TjaFile.h"
-#include "Utils.h"
+#include "../include/TjaFile.h"
+#include "../include/Utils.h"
 
 int main() {
     initializeLogger();

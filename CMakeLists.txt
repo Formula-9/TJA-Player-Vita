@@ -15,17 +15,17 @@ set(VITA_APP_NAME "TJA Player")
 set(VITA_TITLEID "TJAVITA00")
 set(VITA_VERSION "01.00")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -g -Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall -Wextra -Wpedantic")
 
 add_executable(${PROJECT_NAME}
 	src/main.c
-	src/Constants.c
 	src/Logger.c
 	src/Utils.c
 	src/TjaFile.c
 	src/StateMessage.c
 	src/StateMachine.c
+	src/TjaData.c
 	src/test/InGameRenderingState.c
 	src/test/SongSelectState.c
 )
@@ -35,6 +35,7 @@ target_link_libraries(${PROJECT_NAME}
 	png
 	z
 	m
+	ogg
 	SceIofilemgr_stub
 	SceDisplay_stub
 	SceCtrl_stub

@@ -6,9 +6,9 @@
 #include <psp2/ctrl.h>
 #include <psp2/types.h>
 
-#include "../StateMachineCommand.h"
-#include "../State.h"
-#include "../Logger.h"
+#include "../../include/StateMachineCommand.h"
+#include "../../include/State.h"
+#include "../../include/Logger.h"
 
 StateMachineCommand songSelectState_Start(StateMessage *stateMessage);
 StateMachineCommand songSelectState_Update();

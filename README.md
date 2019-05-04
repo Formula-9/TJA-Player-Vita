@@ -4,7 +4,7 @@ A work-in-progress Taiko no Tatsujin Simulator for PlayStation Vita.
 ### Updates
 ***02/05/2019:*** All header data is now read. However, while testing on a folder containing more than 300 TJA files,
 I've noticed that files using non-ANSI encodings (Shift-JIS, UTF formats) tend to have Japanese characters read as *[mojibake][1]*.
-I'll be working on fixing this issue as part of the next commit.
+
 
 ### Notes
 In its current state, this application is not playable yet. At best, by modifying the code, you could log all the TJA

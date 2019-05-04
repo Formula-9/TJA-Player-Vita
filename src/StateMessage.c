@@ -1,4 +1,4 @@
-#include "StateMessage.h"
+#include "../include/StateMessage.h"
 
 /**
  * Cleans up all the memory used by the StateMessage. This function

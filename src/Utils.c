@@ -1,4 +1,4 @@
-#include "Utils.h"
+#include "../include/Utils.h"
 
 /**
  * Search the folder at folderPath and all its sub-folders recursively* for TJA files.
@@ -26,7 +26,6 @@ void findAllTjaFiles(const char *folderPath, int depth_level) {
         sceIoDclose(folderFileDescriptor);
     }
 }
-
 
 /**
  * Determines if a directory entry is a TJA file or not.
