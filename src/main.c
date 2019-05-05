@@ -20,6 +20,7 @@ int main() {
         vita2d_clear_screen();
         updateStateMachine(&stateMachine);
         vita2d_end_drawing();
+        vita2d_wait_rendering_done();
         vita2d_swap_buffers();
     }
 

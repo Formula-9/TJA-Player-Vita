@@ -9,6 +9,7 @@ static SongSelectState stateData = { .selectedDifficulty = DIFFICULTY_NORMAL };
 
 StateMachineCommand songSelectStateStart(StateMessage *stateMessage) {
     initAllBg();
+    initTriggerSprites();
     return STATE_MACHINE_COMMAND_RUN_STATE;
 }
 
@@ -16,11 +17,13 @@ StateMachineCommand songSelectStateUpdate() {
     sceCtrlPeekBufferPositive(0, &stateData.ctrl, 1);
     handleButtons(stateData.ctrl);
     drawBg();
+    drawTriggerSprites();
     return (stateData.ctrl.buttons & SCE_CTRL_START) ? STATE_MACHINE_COMMAND_END_GAME : STATE_MACHINE_COMMAND_RUN_STATE;;
 }
 
 StateMachineCommand songSelectStateEnd(StateMessage *stateMessage) {
     freeAllBg();
+    freeTriggerSprites();
     return STATE_MACHINE_COMMAND_END_GAME;
 }
 
@@ -61,6 +64,22 @@ void drawBg() {
             for (int i = 0; i < 2; i++) vita2d_draw_texture_part(stateData.songSelectBgOni, (i * 486), 0, 1, 0, 486, 550);
             break;
     }
+}
+
+void initTriggerSprites() {
+    stateData.lTriggerSprite = vita2d_load_PNG_file(SONGSELECTSTATE_LTRIGGER_SPRITE);
+    if (!stateData.lTriggerSprite) writeToLogger("Couldn't load L Trigger Sprite!");
+    stateData.rTriggerSprite = vita2d_load_PNG_file(SONGSELECTSTATE_RTRIGGER_SPRITE);
+    if (!stateData.rTriggerSprite) writeToLogger("Couldn't load R Trigger Sprite!");
+}
+void freeTriggerSprites() {
+    vita2d_free_texture(stateData.lTriggerSprite);
+    vita2d_free_texture(stateData.rTriggerSprite);
+}
+
+void drawTriggerSprites() {
+    vita2d_draw_texture(stateData.lTriggerSprite, 243, 5);
+    vita2d_draw_texture(stateData.rTriggerSprite, 643, 5);
 }
 
 void handleButtons() {

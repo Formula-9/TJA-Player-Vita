@@ -96,6 +96,30 @@
 #define NOTETYPE_POTATO_START        9
 
 // ================================================ //
+// || ASCII names for genre folders              || //
+// ================================================ //
+
+#define TJAFOLDER_GENRE_ANIME_ASCII          "Anime"
+#define TJAFOLDER_GENRE_CLASSIC_ASCII        "Classic"
+#define TJAFOLDER_GENRE_GAME_MUSIC_ASCII     "Game Music"
+#define TJAFOLDER_GENRE_JPOP_ASCII           "J-Pop"
+#define TJAFOLDER_GENRE_NAMCO_ORIGINAL_ASCII "Namco Original"
+#define TJAFOLDER_GENRE_VARIETY_ASCII        "Variety"
+#define TJAFOLDER_GENRE_VOCALOID_ASCII       "Vocaloid"
+
+// ================================================ //
+// || Japanese names for genre folders           || //
+// ================================================ //
+
+#define TJAFOLDER_GENRE_ANIME_JP          "アニメ"
+#define TJAFOLDER_GENRE_CLASSIC_JP        "クラシック"
+#define TJAFOLDER_GENRE_GAME_MUSIC_JP     "ゲームミュージック"
+#define TJAFOLDER_GENRE_JPOP_JP           "J-Pop"
+#define TJAFOLDER_GENRE_NAMCO_ORIGINAL_JP "ナムコオリジナル"
+#define TJAFOLDER_GENRE_VARIETY_JP        "バラエティ"
+#define TJAFOLDER_GENRE_VOCALOID_JP       "ボ－カロイド"
+
+// ================================================ //
 // || Extra slots to allocate for TJA Folders    || //
 // ================================================ //
 
@@ -108,6 +132,9 @@
 #define SONGSELECTSTATE_BG_NORMAL  "ux0:/data/tjapvita/gfx/songselect_bg_normal.png"
 #define SONGSELECTSTATE_BG_HARD    "ux0:/data/tjapvita/gfx/songselect_bg_hard.png"
 #define SONGSELECTSTATE_BG_ONI     "ux0:/data/tjapvita/gfx/songselect_bg_oni.png"
+
+#define SONGSELECTSTATE_LTRIGGER_SPRITE     "ux0:/data/tjapvita/gfx/l_trigger.png"
+#define SONGSELECTSTATE_RTRIGGER_SPRITE     "ux0:/data/tjapvita/gfx/r_trigger.png"
 
 // ================================================ //
 // || Logging Utilities                          || //
