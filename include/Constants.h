@@ -1,15 +1,35 @@
 #ifndef TJA_PLAYER_VITA_CONSTANTS_H
 #define TJA_PLAYER_VITA_CONSTANTS_H
 
+// ================================================ //
+// || Paths & Extensions                         || //
+// ================================================ //
+
 #define DEFAULT_LOG_PATH  "ux0:/data/tjapvita/logs"
 #define DEFAULT_TJA_PATH  "ux0:/data/tjapvita/tja"
 #define TJA_EXTENSION     ".tja"
 
+// ================================================ //
+// || Maximum open-able folders when scanning    || //
+// ================================================ //
+
 #define MAX_DEPTH_LEVEL  2
+
+// ================================================ //
+// || Default value when data isn't found.       || //
+// ================================================ //
 
 #define DATA_NOT_FOUND  0
 
+// ================================================ //
+// || Buffer size for TJA parsing                || //
+// ================================================ //
+
 #define BUFFER_SIZE  4096
+
+// ================================================ //
+// || TJA Metadata headers                       || //
+// ================================================ //
 
 #define TITLE_HEADER      "TITLE:"
 #define SUBTITLE_HEADER   "SUBTITLE:"
@@ -29,15 +49,27 @@
 
 #define LEVEL_HEADER "LEVEL:"
 
+// ================================================ //
+// || TJA Score Modes                            || //
+// ================================================ //
+
 #define SCOREMODE_DONDERFUL 0
 #define SCOREMODE_OLDARCADE 1
 #define SCOREMODE_NEWARCADE 2
+
+// ================================================ //
+// || Difficulty Levels (for selection)          || //
+// ================================================ //
 
 #define DIFFICULTY_EDIT   4
 #define DIFFICULTY_ONI    3
 #define DIFFICULTY_HARD   2
 #define DIFFICULTY_NORMAL 1
 #define DIFFICULTY_EASY   0
+
+// ================================================ //
+// || TJA Note Types                             || //
+// ================================================ //
 
 /**
  * Represents the various notes that can appear when playing.
@@ -62,6 +94,24 @@
 #define NOTETYPE_BALLOON_START       7
 #define NOTETYPE_BALLOON_END         8
 #define NOTETYPE_POTATO_START        9
+
+// ================================================ //
+// || Extra slots to allocate for TJA Folders    || //
+// ================================================ //
+
+#define TJAFOLDER_EXTRA_FILE_SLOTS   32
+
+// ================================================ //
+// || SongSelectState Constants (Paths, etc.)    || //
+// ================================================ //
+#define SONGSELECTSTATE_BG_EASY    "ux0:/data/tjapvita/gfx/songselect_bg_easy.png"
+#define SONGSELECTSTATE_BG_NORMAL  "ux0:/data/tjapvita/gfx/songselect_bg_normal.png"
+#define SONGSELECTSTATE_BG_HARD    "ux0:/data/tjapvita/gfx/songselect_bg_hard.png"
+#define SONGSELECTSTATE_BG_ONI     "ux0:/data/tjapvita/gfx/songselect_bg_oni.png"
+
+// ================================================ //
+// || Logging Utilities                          || //
+// ================================================ //
 
 #define TJAFILE_SPRINTF_FORMAT "TjaFile: [filePath=%s; title=%s; subtitle=%s; musicFile=%s; diffEasy=%d; diffNormal=%d;"\
                                "diffHard=%d; diffOni=%d; diffEdit=%d; bpm=%.2f musicVolume=%d; soundEffectVolume=%d;"\

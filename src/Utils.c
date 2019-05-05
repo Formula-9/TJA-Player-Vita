@@ -5,9 +5,9 @@
  * *Note: There is a depth limit. By default, the depth limit is 2, because the application
  * expects tht the TJA to be in DEFAULT_PATH/Genre/SongName/SongName.tja
  * @param folderPath The folder in which the application will look for TJA files.
- * @param depth_level The current depth_level. For most cases, just provide zero.
+ * @param depthLevel The current depth_level. For most cases, just provide zero.
  */
-void findAllTjaFiles(const char *folderPath, int depth_level) {
+void findAllTjaFiles(const char *folderPath, int depthLevel) {
     SceUID folderFileDescriptor = sceIoDopen(folderPath);
     if (folderFileDescriptor >= 0) {
         SceIoDirent dirEntry;
@@ -15,11 +15,10 @@ void findAllTjaFiles(const char *folderPath, int depth_level) {
             if (isTjaFile(dirEntry)) {
                 char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
                 TjaFile *tja = makeTjaFileInstance(pathToTja);
-                logTjaFile(tja);
                 freeTjaFile(tja);
-            } else if (isFolderAndNotParentOrCurrent(dirEntry) && depth_level < MAX_DEPTH_LEVEL) {
+            } else if (isFolderAndNotParentOrCurrent(dirEntry) && depthLevel < MAX_DEPTH_LEVEL) {
                 char *newPath = makePathFromDirAndString(folderPath, dirEntry.d_name);
-                findAllTjaFiles(newPath, depth_level + 1);
+                findAllTjaFiles(newPath, depthLevel + 1);
                 free(newPath);
             }
         }

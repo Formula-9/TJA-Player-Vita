@@ -13,13 +13,13 @@
 typedef struct TjaData {
     TjaFile  *file;
     int      *notes;
-    int       note_count;
-    int      *balloon_hits;
-    int       balloon_count;
-    float    *bpm_change;
-    int       bpm_change_count;
-    float    *scroll_change;
-    int       scroll_change_count;
+    int       noteCount;
+    int      *balloonHits;
+    int       balloonCount;
+    float    *bpmChange;
+    int       bpmChangeCount;
+    float    *scrollChange;
+    int       scrollChangeCount;
 } TjaData;
 
 TjaData *makeTjaDataFromTjaFile(TjaFile *file, int level);

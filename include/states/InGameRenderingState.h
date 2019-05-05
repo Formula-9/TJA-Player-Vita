@@ -1,16 +1,17 @@
 #ifndef TJA_PLAYER_VITA_INGAMERENDERINGSTATE_H
 #define TJA_PLAYER_VITA_INGAMERENDERINGSTATE_H
 
-#include "../../include/StateMachineCommand.h"
-#include "../../include/State.h"
-#include "../../include/Logger.h"
+#include "../StateMachineCommand.h"
+#include "../State.h"
+#include "../Logger.h"
 
 #include <vita2d.h>
 #include <psp2/ctrl.h>
+#include <psp2/types.h>
 
-StateMachineCommand inGameRenderingState_Start(StateMessage *stateMessage);
-StateMachineCommand inGameRenderingState_Update();
-StateMachineCommand inGameRenderingState_End(StateMessage *stateMessage);
+StateMachineCommand inGameRenderingStateStart(StateMessage *stateMessage);
+StateMachineCommand inGameRenderingStateUpdate();
+StateMachineCommand inGameRenderingStateEnd(StateMessage *stateMessage);
 
 /* Init */
 void initTopBg();
@@ -33,7 +34,5 @@ typedef struct InGameRenderingState {
     vita2d_texture *hitMarkSprite;
     SceCtrlData ctrl;
 } InGameRenderingState;
-
-static InGameRenderingState stateData;
 
 #endif //TJA_PLAYER_VITA_INGAMERENDERINGSTATE_H

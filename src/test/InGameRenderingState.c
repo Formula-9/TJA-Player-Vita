@@ -1,11 +1,13 @@
-#include "InGameRenderingState.h"
+#include "../../include/states/InGameRenderingState.h"
 
-State inGameRenderingState = { .startFunction = &inGameRenderingState_Start,
-                               .updateFunction = &inGameRenderingState_Update,
-                               .endFunction = &inGameRenderingState_End,
+State inGameRenderingState = { .startFunction = &inGameRenderingStateStart,
+                               .updateFunction = &inGameRenderingStateUpdate,
+                               .endFunction = &inGameRenderingStateEnd,
                                .nextState = NULL };
 
-StateMachineCommand inGameRenderingState_Start(StateMessage *stateMessage) {
+static InGameRenderingState stateData;
+
+StateMachineCommand inGameRenderingStateStart(StateMessage *stateMessage) {
     initTopBg();
     initLaneLeftWindow();
     initNoteLane();
@@ -13,7 +15,7 @@ StateMachineCommand inGameRenderingState_Start(StateMessage *stateMessage) {
     return STATE_MACHINE_COMMAND_RUN_STATE;
 }
 
-StateMachineCommand inGameRenderingState_Update() {
+StateMachineCommand inGameRenderingStateUpdate() {
     sceCtrlPeekBufferPositive(0, &stateData.ctrl, 1);
     drawTopBg();
     drawNoteLane();
@@ -22,7 +24,7 @@ StateMachineCommand inGameRenderingState_Update() {
     return (stateData.ctrl.buttons & SCE_CTRL_START) ? STATE_MACHINE_COMMAND_END_GAME : STATE_MACHINE_COMMAND_RUN_STATE;
 }
 
-StateMachineCommand inGameRenderingState_End(StateMessage *stateMessage) {
+StateMachineCommand inGameRenderingStateEnd(StateMessage *stateMessage) {
     vita2d_free_texture(stateData.topBgSprite);
     vita2d_free_texture(stateData.laneLeftWindowSprite);
     vita2d_free_texture(stateData.noteLaneSprite);
@@ -33,23 +35,23 @@ StateMachineCommand inGameRenderingState_End(StateMessage *stateMessage) {
 void initTopBg() {
     //SDL_Rect dimRect = { .x = 0, .y = 0, .w = 278, .h = 156 };
     stateData.topBgSprite = vita2d_load_PNG_file("ux0:/data/tjapvita/gfx/bg_top_0.png");
-    if (stateData.topBgSprite == NULL) { writeToLogger("Error: Couldn't load the top BG!"); }
+    if (!stateData.topBgSprite) { writeToLogger("Error: Couldn't load the top BG!"); }
 }
 
 void initLaneLeftWindow() {
     /* SDL_Rect dstRect = { .x = 0, .y = 148, .w = 250, .h = 148 }; */
     stateData.laneLeftWindowSprite = vita2d_load_PNG_file("ux0:/data/tjapvita/gfx/lane_left_window.png");
-    if (stateData.laneLeftWindowSprite == NULL) { writeToLogger("Error: Couldn't load the left lane window!"); }
+    if (!stateData.laneLeftWindowSprite) { writeToLogger("Error: Couldn't load the left lane window!"); }
 }
 
 void initNoteLane() {
     stateData.noteLaneSprite = vita2d_load_PNG_file("ux0:/data/tjapvita/gfx/note_lane.png");
-    if (stateData.noteLaneSprite == NULL) { writeToLogger("Error: Couldn't load the note lane!"); }
+    if (!stateData.noteLaneSprite) { writeToLogger("Error: Couldn't load the note lane!"); }
 }
 
 void initHitMark() {
     stateData.hitMarkSprite = vita2d_load_PNG_file("ux0:/data/tjapvita/gfx/hit_mark.png");
-    if (stateData.hitMarkSprite == NULL) { writeToLogger("Error: Couldn't load the hit mark!"); }
+    if (!stateData.hitMarkSprite) { writeToLogger("Error: Couldn't load the hit mark!"); }
 }
 
 void drawTopBg() {

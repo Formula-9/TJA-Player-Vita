@@ -9,7 +9,7 @@
 #include "Logger.h"
 #include "TjaFile.h"
 
-void findAllTjaFiles(const char *folderPath, int depth_level);
+void findAllTjaFiles(const char *folderPath, int depthLevel);
 const char *getLastFourCharactersOfString(const char *string);
 int isTjaFile(SceIoDirent dirEntry);
 int isFolderAndNotParentOrCurrent(SceIoDirent dirEntry);

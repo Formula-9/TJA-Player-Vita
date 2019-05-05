@@ -52,9 +52,9 @@ void writeTimestamp() {
 void writePointerToLogger(void *ptr) {
     if (logger > 0) {
         writeTimestamp();
-        char ptr_message[128];
-        snprintf(ptr_message, sizeof(ptr_message), "Logged Pointer Address: %p\n", ptr);
-        sceIoWrite(logger, ptr_message, strlen(ptr_message));
+        char ptrMessage[128];
+        snprintf(ptrMessage, sizeof(ptrMessage), "Logged Pointer Address: %p\n", ptr);
+        sceIoWrite(logger, ptrMessage, strlen(ptrMessage));
     }
 }
 

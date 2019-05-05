@@ -43,7 +43,7 @@ void performFirstPass(TjaData *data, int level, SceUID fileDescriptor) {
 void logTjaData(TjaData *data) {
     static char buffer[512];
     snprintf(buffer, 512, TJADATA_SPRINTF_FORMAT,
-             data->file, data->notes, data->note_count, data->balloon_hits, data->balloon_count, data->bpm_change,
-             data->bpm_change_count, data->scroll_change, data->scroll_change_count);
+             data->file, data->notes, data->noteCount, data->balloonHits, data->balloonCount, data->bpmChange,
+             data->bpmChangeCount, data->scrollChange, data->scrollChangeCount);
     writeToLogger(buffer);
 }

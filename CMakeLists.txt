@@ -22,10 +22,11 @@ add_executable(${PROJECT_NAME}
 	src/main.c
 	src/Logger.c
 	src/Utils.c
-	src/TjaFile.c
 	src/StateMessage.c
 	src/StateMachine.c
 	src/TjaData.c
+	src/TjaFile.c
+	src/TjaFolder.c
 	src/test/InGameRenderingState.c
 	src/test/SongSelectState.c
 )
