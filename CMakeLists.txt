@@ -29,7 +29,7 @@ add_executable(${PROJECT_NAME}
 	src/TjaFolder.c
 	src/test/InGameRenderingState.c
 	src/test/SongSelectState.c
-)
+	src/SjisToUtf8.c src/SjisTable.c)
 
 target_link_libraries(${PROJECT_NAME}
 	vita2d

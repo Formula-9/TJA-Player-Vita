@@ -1,6 +1,11 @@
 #ifndef TJA_PLAYER_VITA_UTILS_H
 #define TJA_PLAYER_VITA_UTILS_H
 
+#include <string.h>
+#include <stdlib.h>
+#include <iconv.h>
+#include <stdio.h>
+
 #include <psp2/types.h>
 #include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
@@ -15,5 +20,7 @@ int isTjaFile(SceIoDirent dirEntry);
 int isFolderAndNotParentOrCurrent(SceIoDirent dirEntry);
 int isFolder(SceIoDirent dirEntry);
 char *makePathFromDirAndString(const char *basePath, const char *extensionPath);
+char *shiftJisToUtf8(char *shiftJisString);
+size_t getStringSize(char *string);
 
 #endif //TJA_PLAYER_VITA_UTILS_H

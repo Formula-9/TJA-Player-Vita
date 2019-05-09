@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <psp2/io/fcntl.h>
+#include <psp2/rtc.h>
+
 #include "../include/Logger.h"
 
 // ================
@@ -30,6 +36,16 @@ void writeToLogger(const char *message) {
     if (logger > 0) {
         writeTimestamp();
         sceIoWrite(logger, message, strlen(message));
+        sceIoWrite(logger, "\n", 1);
+    }
+}
+
+void writeIntToLogger(int value) {
+    if (logger > 0) {
+        writeTimestamp();
+        static char buf[24];
+        snprintf(buf, sizeof(buf), "%d", value);
+        sceIoWrite(logger, buf, strlen(buf));
         sceIoWrite(logger, "\n", 1);
     }
 }

@@ -1,12 +1,21 @@
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <psp2/io/fcntl.h>
+
+#include "../include/Utils.h"
 #include "../include/TjaFile.h"
+#include "../include/Constants.h"
+#include "../include/Logger.h"
+#include "../include/SjisToUtf8.h"
 
 TjaFile *makeTjaFileInstance(char *filePath) {
     TjaFile *result = NULL;
     SceUID fileDescriptor;
     if ((fileDescriptor = sceIoOpen(filePath, SCE_O_RDONLY, 0777)) >= 0) {
-        result = malloc(sizeof(TjaFile));
+        result = calloc(1, sizeof(TjaFile));
         if (result) {
-            initBlankTjaFile(result);
             result->filePath = filePath;
             parseFileHeader(fileDescriptor, result);
         } else { writeToLogger("Error: couldn't allocate memory for TjaFile!"); }
@@ -15,15 +24,8 @@ TjaFile *makeTjaFileInstance(char *filePath) {
         writeToLogger("Error: couldn't open file for reading!");
         free(filePath);
     }
+    writeToLogger("Everything is OK, returning!");
     return result;
-}
-
-/**
- * Ensures that the memory area for a newly created instance of TjaFile is clean.
- * @param file A pointer to the TjaFile instance. The memory at the pointed address will be cleaned and set to zeroes.
- */
-void initBlankTjaFile(TjaFile *file) {
-    memset(file, 0, sizeof(*file));
 }
 
 /**
@@ -113,12 +115,16 @@ void checkForStringTypeData(const char *buffer, char **result, const char *heade
     char *position = strstr(buffer, header);
     if (position != NULL) {
         position += strlen(header);
-        size_t stringSize = strcspn(position, "\r");
-        char *string = malloc(stringSize);
+        size_t stringSize = getStringSize(position);
+        char *string = calloc(1, stringSize * sizeof(char));
         if (string) {
             strncpy(string, position, stringSize);
-            *result = string;
-        } else { writeToLogger("Error: couldn't allocate memory for music file name!");}
+            string[stringSize] = '\0';
+            *result = shiftJisToUtf8(string);
+            writeToLogger("Conversion OK ! Result on next line:");
+            writeToLogger(*result);
+            free(string);
+        } else { writeToLogger("Error: couldn't allocate memory for string!"); }
     }
 }
 
@@ -134,7 +140,7 @@ void checkForLevelData(const char *buffer, TjaFile *file, const char *courseLeve
     char *position = strstr(buffer, courseLevelHeader);
     if (position != NULL) {
         position += strlen(courseLevelHeader) + strlen(LEVEL_HEADER);
-        if (!strcmp(courseLevelHeader, EDIT_LEVEL_HEADER))  { file->diffEdit = strtol(position, NULL, 10); }
+        if (!strcmp(courseLevelHeader, EDIT_LEVEL_HEADER)) { file->diffEdit = strtol(position, NULL, 10); }
         else if (!strcmp(courseLevelHeader, ONI_LEVEL_HEADER)) { file->diffOni = strtol(position, NULL, 10); }
         else if (!strcmp(courseLevelHeader, HARD_LEVEL_HEADER)) { file->diffHard = strtol(position, NULL, 10); }
         else if (!strcmp(courseLevelHeader, NORMAL_LEVEL_HEADER)) { file->diffNormal = strtol(position, NULL, 10); }
@@ -158,9 +164,12 @@ void checkForAnyLevelData(const char *buffer, TjaFile *file) {
 
 void logTjaFile(TjaFile *tjaFile) {
     static char buffer[512];
-    snprintf(buffer, 512, TJAFILE_SPRINTF_FORMAT, tjaFile->filePath, tjaFile->title, tjaFile->subtitle, tjaFile->musicFile,
-             tjaFile->diffEasy, tjaFile->diffNormal, tjaFile->diffHard, tjaFile->diffOni, tjaFile->diffEdit, tjaFile->bpm,
-             tjaFile->musicVolume, tjaFile->soundEffectVolume, tjaFile->scoreMode, tjaFile->subtitleEffect, tjaFile->offset,
+    snprintf(buffer, 512, TJAFILE_SPRINTF_FORMAT, tjaFile->filePath, tjaFile->title, tjaFile->subtitle,
+             tjaFile->musicFile,
+             tjaFile->diffEasy, tjaFile->diffNormal, tjaFile->diffHard, tjaFile->diffOni, tjaFile->diffEdit,
+             tjaFile->bpm,
+             tjaFile->musicVolume, tjaFile->soundEffectVolume, tjaFile->scoreMode, tjaFile->subtitleEffect,
+             tjaFile->offset,
              tjaFile->demoStart);
     writeToLogger(buffer);
 }

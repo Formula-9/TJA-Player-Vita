@@ -1,8 +1,6 @@
 #ifndef TJA_PLAYER_VITA_STATEMESSAGE_H
 #define TJA_PLAYER_VITA_STATEMESSAGE_H
 
-#include <stdlib.h>
-
 /**
  * This structure might be a bit confusing, but it exists to
  * pass various structures or data from one state to another.

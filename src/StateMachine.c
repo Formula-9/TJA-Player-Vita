@@ -1,3 +1,4 @@
+#include "../include/Logger.h"
 #include "../include/StateMachine.h"
 
 /**

@@ -1,4 +1,10 @@
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "../include/TjaFolder.h"
+#include "../include/TjaFile.h"
+#include "../include/Logger.h"
 
 /**
  * Creates a new instance of TjaFolder.
@@ -6,7 +12,7 @@
  * @param initialCapacity The initial capacity of the folder.
  * @return A pointer to the created instance, or NULL if the allocation failed.
  */
-TjaFolder *newTjaFolder(const char *folderName, const int initialCapacity) {
+TjaFolder *newTjaFolder(char *folderName, int initialCapacity) {
     TjaFolder *folder = malloc(sizeof(char*) + sizeof(int) * 2 + sizeof(TjaFile*) * initialCapacity);
     if (folder) {
         memset(folder, 0, sizeof(TjaFolder));

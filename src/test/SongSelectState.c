@@ -18,7 +18,7 @@ StateMachineCommand songSelectStateUpdate() {
     handleButtons(stateData.ctrl);
     drawBg();
     drawTriggerSprites();
-    return (stateData.ctrl.buttons & SCE_CTRL_START) ? STATE_MACHINE_COMMAND_END_GAME : STATE_MACHINE_COMMAND_RUN_STATE;;
+    return (stateData.ctrl.buttons & SCE_CTRL_START) ? STATE_MACHINE_COMMAND_END_GAME : STATE_MACHINE_COMMAND_RUN_STATE;
 }
 
 StateMachineCommand songSelectStateEnd(StateMessage *stateMessage) {

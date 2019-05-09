@@ -15,6 +15,7 @@ void findAllTjaFiles(const char *folderPath, int depthLevel) {
             if (isTjaFile(dirEntry)) {
                 char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
                 TjaFile *tja = makeTjaFileInstance(pathToTja);
+                logTjaFile(tja);
                 freeTjaFile(tja);
             } else if (isFolderAndNotParentOrCurrent(dirEntry) && depthLevel < MAX_DEPTH_LEVEL) {
                 char *newPath = makePathFromDirAndString(folderPath, dirEntry.d_name);
@@ -23,7 +24,7 @@ void findAllTjaFiles(const char *folderPath, int depthLevel) {
             }
         }
         sceIoDclose(folderFileDescriptor);
-    }
+    } else { writeToLogger("Couldn't open directory for scan!"); }
 }
 
 /**
@@ -84,4 +85,15 @@ char *makePathFromDirAndString(const char *basePath, const char *extensionPath) 
         strcpy(buffer + basePathLength + 1, extensionPath);
     } else { writeToLogger("Error: couldn't allocate memory to create a string!"); }
     return buffer;
+}
+
+/**
+ * This function determines the smallest size to allocate for a TITLE / SUBTITLE / WAVE string.
+ * @param string The string that needs to be checked (ex: "TITLE: <SONGTITLE><line return>")
+ * @return The size of the string to allocate.
+ */
+size_t getStringSize(char *string) {
+    size_t stringSizeLineFeed = strcspn(string, "\n");
+    size_t stringSizeCarriageReturn = strcspn(string, "\r");
+    return stringSizeCarriageReturn < stringSizeLineFeed ? stringSizeCarriageReturn : stringSizeLineFeed;
 }

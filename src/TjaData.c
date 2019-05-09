@@ -1,26 +1,24 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <psp2/io/fcntl.h>
+
+#include "../include/TjaFile.h"
+#include "../include/Logger.h"
+#include "../include/Constants.h"
 #include "../include/TjaData.h"
 
 TjaData *makeTjaDataFromTjaFile(TjaFile *file, int level) {
     TjaData *result = NULL;
     SceUID fileDescriptor;
     if (file != NULL && (fileDescriptor = sceIoOpen(file->filePath, SCE_O_RDONLY, 0777)) >= 0) {
-        result = malloc(sizeof(TjaData));
+        result = calloc(1, sizeof(TjaData));
         if (result) {
-            initBlankTjaData(result);
             result->file = file;
             performFirstPass(result, level, fileDescriptor);
         }
         sceIoClose(fileDescriptor);
     } else { writeToLogger("Couldn't open the file for reading!"); }
     return result;
-}
-
-/**
- * Ensures that the memory area for a newly created instance of TjaFile is clean.
- * @param data The memory area to clean up.
- */
-void initBlankTjaData(TjaData *data) {
-    memset(data, 0, sizeof(*data));
 }
 
 /**

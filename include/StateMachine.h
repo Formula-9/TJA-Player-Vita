@@ -4,7 +4,6 @@
 #include "StateMachineCommand.h"
 #include "State.h"
 #include "StateMessage.h"
-#include "Logger.h"
 
 /**
  * Represents a State Machine that loads States and receive commands from
