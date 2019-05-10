@@ -3,6 +3,6 @@
 
 #include "Constants.h"
 
-extern const char sjisTable[SJIS_TABLE_SIZE];
+extern const unsigned char sjisTable[SJIS_TABLE_SIZE];
 
 #endif //TJA_PLAYER_VITA_SJISTABLE_H

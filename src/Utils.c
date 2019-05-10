@@ -15,6 +15,7 @@ void findAllTjaFiles(const char *folderPath, int depthLevel) {
             if (isTjaFile(dirEntry)) {
                 char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
                 TjaFile *tja = makeTjaFileInstance(pathToTja);
+				free(pathToTja);
                 logTjaFile(tja);
                 freeTjaFile(tja);
             } else if (isFolderAndNotParentOrCurrent(dirEntry) && depthLevel < MAX_DEPTH_LEVEL) {

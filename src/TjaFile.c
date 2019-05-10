@@ -16,15 +16,13 @@ TjaFile *makeTjaFileInstance(char *filePath) {
     if ((fileDescriptor = sceIoOpen(filePath, SCE_O_RDONLY, 0777)) >= 0) {
         result = calloc(1, sizeof(TjaFile));
         if (result) {
-            result->filePath = filePath;
+            result->filePath = strdup(filePath);
             parseFileHeader(fileDescriptor, result);
         } else { writeToLogger("Error: couldn't allocate memory for TjaFile!"); }
         sceIoClose(fileDescriptor);
     } else {
         writeToLogger("Error: couldn't open file for reading!");
-        free(filePath);
     }
-    writeToLogger("Everything is OK, returning!");
     return result;
 }
 
@@ -115,16 +113,16 @@ void checkForStringTypeData(const char *buffer, char **result, const char *heade
     char *position = strstr(buffer, header);
     if (position != NULL) {
         position += strlen(header);
-        size_t stringSize = getStringSize(position);
-        char *string = calloc(1, stringSize * sizeof(char));
+        size_t stringSizeLineFeed = strcspn(position, "\n");
+        size_t stringSizeCarriageReturn = strcspn(position, "\r");
+        size_t stringSize = stringSizeCarriageReturn < stringSizeLineFeed ? stringSizeCarriageReturn : stringSizeLineFeed;
+        char *string = malloc(stringSize + 1);
         if (string) {
             strncpy(string, position, stringSize);
             string[stringSize] = '\0';
             *result = shiftJisToUtf8(string);
-            writeToLogger("Conversion OK ! Result on next line:");
-            writeToLogger(*result);
             free(string);
-        } else { writeToLogger("Error: couldn't allocate memory for string!"); }
+        } else { writeToLogger("Error: couldn't allocate memory for music file name!");}
     }
 }
 
