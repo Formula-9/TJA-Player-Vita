@@ -9,6 +9,8 @@ Once the application will be "stable" enough, they will likely be bundled with t
 ***10/05/2019:*** Shift JIS is now supported ! Next step is to test if a string is encoded in Shift-JIS to prevent accidental
 conversion to UTF-8. Note: Other encodings may still be buggy / broken (ie. UTF-8 with Byte Order Mark)
 
+***16/05/2019*** The project is on a short hiatus due to real life circumstances (mainly work). Development will resume likely mid-June.
+
 ### Notes
 In its current state, this application is not playable yet.
 However, by modifying the code slightly, it is possible to test a few things right now.
