@@ -1,5 +1,15 @@
 #include "../include/Utils.h"
 
+#include <string.h>
+#include <stdlib.h>
+#include <iconv.h>
+#include <stdio.h>
+#include <sys/stat.h>
+
+#include "../include/Constants.h"
+#include "../include/Logger.h"
+#include "../include/TjaFile.h"
+
 /**
  * Search the folder at folderPath and all its sub-folders recursively* for TJA files.
  * *Note: There is a depth limit. By default, the depth limit is 2, because the application
@@ -8,35 +18,40 @@
  * @param depthLevel The current depth_level. For most cases, just provide zero.
  */
 void findAllTjaFiles(const char *folderPath, int depthLevel) {
-    SceUID folderFileDescriptor = sceIoDopen(folderPath);
-    if (folderFileDescriptor >= 0) {
-        SceIoDirent dirEntry;
-        while (sceIoDread(folderFileDescriptor, &dirEntry) > 0) {
-            if (isTjaFile(dirEntry)) {
-                char *pathToTja = makePathFromDirAndString(folderPath, dirEntry.d_name);
+    DIR *folderFileDescriptor = opendir(folderPath);
+    if (folderFileDescriptor) {
+        struct dirent *dirEntry;
+        while ((dirEntry = readdir(folderFileDescriptor)) != NULL) {
+            if (isTjaFile(dirEntry, folderPath)) {
+                char *pathToTja = makePathFromDirAndString(folderPath, dirEntry->d_name);
                 TjaFile *tja = makeTjaFileInstance(pathToTja);
 				free(pathToTja);
                 logTjaFile(tja);
                 freeTjaFile(tja);
-            } else if (isFolderAndNotParentOrCurrent(dirEntry) && depthLevel < MAX_DEPTH_LEVEL) {
-                char *newPath = makePathFromDirAndString(folderPath, dirEntry.d_name);
+            } else if (isFolderAndNotParentOrCurrent(dirEntry, folderPath) && depthLevel < MAX_DEPTH_LEVEL) {
+                char *newPath = makePathFromDirAndString(folderPath, dirEntry->d_name);
                 findAllTjaFiles(newPath, depthLevel + 1);
                 free(newPath);
             }
         }
-        sceIoDclose(folderFileDescriptor);
+        closedir(folderFileDescriptor);
     } else { writeToLogger("Couldn't open directory for scan!"); }
 }
 
 /**
  * Determines if a directory entry is a TJA file or not.
  * @param dirEntry The directory entry to check.
+ * @param folderPath The path to the directory entry.
  * @return 1 if the entry is a TJA file, or 0 if it's a different kind of file.
  */
-int isTjaFile(SceIoDirent dirEntry) {
+int isTjaFile(struct dirent *dirEntry, const char *folderPath) {
     int result = 1;
-    if (!SCE_S_ISREG(dirEntry.d_stat.st_mode)) result = 0;
-    if (result && (strncmp(getLastFourCharactersOfString(dirEntry.d_name), TJA_EXTENSION, 4) != 0)) result = 0;
+    struct stat entryStat;
+    char *pos = makePathFromDirAndString(folderPath, dirEntry->d_name);
+    stat(pos, &entryStat);
+    free(pos);
+    if (!S_ISREG(entryStat.st_mode)) result = 0;
+    if (result && (strncmp(getLastFourCharactersOfString(dirEntry->d_name), TJA_EXTENSION, 4) != 0)) result = 0;
     return result;
 }
 
@@ -44,19 +59,25 @@ int isTjaFile(SceIoDirent dirEntry) {
  * Determines if a directory entry is a folder or not, and if it's a folder, not one that points to the current
  * folder (also known as ".") or to its parent (also known as "..") .
  * @param dirEntry The directory entry to check.
+ * @param folderPath The path to the directory entry.
  * @return 1 if the conditions are satisfied, or 0 if at least one of them aren't.
  */
-int isFolderAndNotParentOrCurrent(SceIoDirent dirEntry) {
-    return isFolder(dirEntry) && (strncmp(dirEntry.d_name, ".", 1) != 0) && (strncmp(dirEntry.d_name, "..", 1) != 0);
+int isFolderAndNotParentOrCurrent(struct dirent *dirEntry, const char *folderPath) {
+    return isFolder(dirEntry, folderPath) && (strncmp(dirEntry->d_name, ".", 1) != 0) && (strncmp(dirEntry->d_name, "..", 1) != 0);
 }
 
 /**
  * Determines if a directory entry is a folder or not.
  * @param dirEntry he directory entry to check.
+ * @param folderPath The path to the directory entry.
  * @return 1 if the entry is a folder, or 0 if it isn't.
  */
-int isFolder(SceIoDirent dirEntry) {
-    return (SCE_S_ISDIR(dirEntry.d_stat.st_mode));
+int isFolder(struct dirent *dirEntry, const char *folderPath) {
+    struct stat entryStat;
+    char *pos = makePathFromDirAndString(folderPath, dirEntry->d_name);
+    stat(pos, &entryStat);
+    free(pos);
+    return (S_ISDIR(entryStat.st_mode));
 }
 
 /**

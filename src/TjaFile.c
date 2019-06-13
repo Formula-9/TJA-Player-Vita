@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <psp2/io/fcntl.h>
-
 #include "../include/Utils.h"
 #include "../include/TjaFile.h"
 #include "../include/Constants.h"
@@ -12,14 +10,14 @@
 
 TjaFile *makeTjaFileInstance(char *filePath) {
     TjaFile *result = NULL;
-    SceUID fileDescriptor;
-    if ((fileDescriptor = sceIoOpen(filePath, SCE_O_RDONLY, 0777)) >= 0) {
+    FILE *fileDescriptor = fopen(filePath, "r");
+    if (fileDescriptor) {
         result = calloc(1, sizeof(TjaFile));
         if (result) {
             result->filePath = strdup(filePath);
             parseFileHeader(fileDescriptor, result);
         } else { writeToLogger("Error: couldn't allocate memory for TjaFile!"); }
-        sceIoClose(fileDescriptor);
+        fclose(fileDescriptor);
     } else {
         writeToLogger("Error: couldn't open file for reading!");
     }
@@ -32,9 +30,9 @@ TjaFile *makeTjaFileInstance(char *filePath) {
  * @param fileDescriptor
  * @param tjaFile
  */
-void parseFileHeader(SceUID fileDescriptor, TjaFile *tjaFile) {
+void parseFileHeader(FILE *fileDescriptor, TjaFile *tjaFile) {
     static char buffer[BUFFER_SIZE];
-    while (sceIoRead(fileDescriptor, buffer, sizeof(buffer)) > 0) {
+    while (fread(buffer, sizeof(char), sizeof(buffer), fileDescriptor) > 0) {
         checkIfBufferEndsWithCourseAndReposition(fileDescriptor, buffer);
         repositionToClosestLineReturn(fileDescriptor, buffer);
         checkForMissingData(buffer, tjaFile);
@@ -47,7 +45,7 @@ void parseFileHeader(SceUID fileDescriptor, TjaFile *tjaFile) {
  * @param fileDescriptor The file descriptor that will be moved back if necessary.
  * @param buffer The buffer to check and modify.
  */
-void checkIfBufferEndsWithCourseAndReposition(SceUID fileDescriptor, char *buffer) {
+void checkIfBufferEndsWithCourseAndReposition(FILE *fileDescriptor, char *buffer) {
     char *headers[5] = {EDIT_LEVEL_HEADER, ONI_LEVEL_HEADER, HARD_LEVEL_HEADER, NORMAL_LEVEL_HEADER, EASY_LEVEL_HEADER};
     int repositionned = 0;
     int iterator = 0;
@@ -60,7 +58,7 @@ void checkIfBufferEndsWithCourseAndReposition(SceUID fileDescriptor, char *buffe
 
     if (repositionned) {
         int charactersToGoBack = -strlen(headers[iterator]);
-        sceIoLseek(fileDescriptor, charactersToGoBack, SCE_SEEK_CUR);
+        fseek(fileDescriptor, charactersToGoBack, SEEK_CUR);
         int nullTerminatorPosition = strlen(buffer) - strlen(position);
         buffer[nullTerminatorPosition] = '\0';
     }
@@ -72,10 +70,10 @@ void checkIfBufferEndsWithCourseAndReposition(SceUID fileDescriptor, char *buffe
  * @param fileDescriptor The file descriptor that will be set back.
  * @param buffer The buffer that will be truncated.
  */
-void repositionToClosestLineReturn(SceUID fileDescriptor, char *buffer) {
+void repositionToClosestLineReturn(FILE *fileDescriptor, char *buffer) {
     char *lastNewLineChar = strrchr(buffer, '\n') + 1;
     int charactersToGoBack = -strlen(lastNewLineChar);
-    sceIoLseek(fileDescriptor, charactersToGoBack, SCE_SEEK_CUR);
+    fseek(fileDescriptor, charactersToGoBack, SEEK_CUR);
     int nullTerminatorPosition = strlen(buffer) - strlen(lastNewLineChar);
     buffer[nullTerminatorPosition] = '\0';
 }

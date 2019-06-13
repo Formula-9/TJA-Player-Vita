@@ -1,7 +1,7 @@
 #ifndef TJA_PLAYER_VITA_TJAFILE_H
 #define TJA_PLAYER_VITA_TJAFILE_H
 
-#include <psp2/types.h>
+#include <stdio.h>
 
 typedef struct TjaFile {
     char *filePath;
@@ -23,9 +23,9 @@ typedef struct TjaFile {
 } TjaFile;
 
 TjaFile *makeTjaFileInstance(char *filePath);
-void parseFileHeader(SceUID fileDescriptor, TjaFile *tjaFile);
-void checkIfBufferEndsWithCourseAndReposition(SceUID fileDescriptor, char *buffer);
-void repositionToClosestLineReturn(SceUID fileDescriptor, char *buffer);
+void parseFileHeader(FILE *fileDescriptor, TjaFile *tjaFile);
+void checkIfBufferEndsWithCourseAndReposition(FILE *fileDescriptor, char *buffer);
+void repositionToClosestLineReturn(FILE *fileDescriptor, char *buffer);
 void checkForMissingData(const char *buffer, TjaFile *tjaFile);
 void checkForIntTypeData(const char *buffer, int *result, const char *header);
 void checkForFloatTypeData(const char *buffer, float *result, const char *header);

@@ -3,8 +3,6 @@
 #include <vita2d.h>
 
 #include "../include/Logger.h"
-#include "../include/StateMachine.h"
-#include "../include/StateMachineCommand.h"
 #include "../include/states/SongSelectState.h"
 #include "../include/TjaFile.h"
 #include "../include/Utils.h"
@@ -16,9 +14,7 @@ int main() {
 
     findAllTjaFiles(DEFAULT_TJA_PATH, 0);
 
-    /* StateMachine stateMachine = { .stateMachineCommand = STATE_MACHINE_COMMAND_INIT,
-                                  .state = songSelectState };
-
+    /*
     struct timeval frameStart, frameEnd;
 
     while (stateMachine.stateMachineCommand != STATE_MACHINE_COMMAND_END_GAME) {
@@ -33,8 +29,7 @@ int main() {
         sceKernelDelayThread(MAX_DELAY_MICROSECONDS - (frameEnd.tv_usec - frameStart.tv_usec));
     }
 
-    //findAllTjaFiles(DEFAULT_TJA_PATH, 0);
-    cleanupStateMachine(&stateMachine); */
+    //findAllTjaFiles(DEFAULT_TJA_PATH, 0); */
     exitLogger();
     vita2d_fini();
     sceKernelExitProcess(0);

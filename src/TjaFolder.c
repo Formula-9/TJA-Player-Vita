@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "../include/TjaFolder.h"
+#include "../include/Constants.h"
 #include "../include/TjaFile.h"
 #include "../include/Logger.h"
 

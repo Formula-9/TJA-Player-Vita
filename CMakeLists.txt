@@ -22,14 +22,14 @@ add_executable(${PROJECT_NAME}
 	src/main.c
 	src/Logger.c
 	src/Utils.c
-	src/StateMessage.c
-	src/StateMachine.c
 	src/TjaData.c
 	src/TjaFile.c
 	src/TjaFolder.c
-	src/test/InGameRenderingState.c
-	src/test/SongSelectState.c
-	src/SjisToUtf8.c src/SjisTable.c)
+	src/states/InGameRenderingState.c
+	src/states/SongSelectState.c
+	src/SjisToUtf8.c
+	src/SjisTable.c
+)
 
 target_link_libraries(${PROJECT_NAME}
 	vita2d

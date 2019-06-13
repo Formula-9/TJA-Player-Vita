@@ -9,7 +9,8 @@ Once the application will be "stable" enough, they will likely be bundled with t
 ***10/05/2019:*** Shift JIS is now supported ! Next step is to test if a string is encoded in Shift-JIS to prevent accidental
 conversion to UTF-8. Note: Other encodings may still be buggy / broken (ie. UTF-8 with Byte Order Mark)
 
-***16/05/2019*** The project is on a short hiatus due to real life circumstances (mainly work). Development will resume likely mid-June.
+***13/06/2019:*** Hiatus now over, expect more activity. First commit might be some cleaning up, and the next one should be
+Ogg Vorbis support once I get it working properly.
 
 ### Notes
 In its current state, this application is not playable yet.

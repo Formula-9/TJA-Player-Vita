@@ -1,7 +1,7 @@
 #ifndef TJA_PLAYER_VITA_TJADATA_H
 #define TJA_PLAYER_VITA_TJADATA_H
 
-#include <psp2/types.h>
+#include <stdio.h>
 
 typedef struct TjaData {
     TjaFile  *file;
@@ -16,7 +16,7 @@ typedef struct TjaData {
 } TjaData;
 
 TjaData *makeTjaDataFromTjaFile(TjaFile *file, int level);
-void performFirstPass(TjaData *data, int level, SceUID fileDescriptor);
+void performFirstPass(TjaData *data, int level, FILE *fileDescriptor);
 void logTjaData(TjaData *data);
 
 #endif //TJA_PLAYER_VITA_TJADATA_H

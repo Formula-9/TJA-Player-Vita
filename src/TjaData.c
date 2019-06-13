@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <psp2/io/fcntl.h>
 
 #include "../include/TjaFile.h"
 #include "../include/Logger.h"
@@ -9,14 +8,14 @@
 
 TjaData *makeTjaDataFromTjaFile(TjaFile *file, int level) {
     TjaData *result = NULL;
-    SceUID fileDescriptor;
-    if (file != NULL && (fileDescriptor = sceIoOpen(file->filePath, SCE_O_RDONLY, 0777)) >= 0) {
+    FILE *fileDescriptor;
+    if (file != NULL && (fileDescriptor = fopen(file->filePath, "r"))) {
         result = calloc(1, sizeof(TjaData));
         if (result) {
             result->file = file;
             performFirstPass(result, level, fileDescriptor);
         }
-        sceIoClose(fileDescriptor);
+        fclose(fileDescriptor);
     } else { writeToLogger("Couldn't open the file for reading!"); }
     return result;
 }
@@ -28,7 +27,7 @@ TjaData *makeTjaDataFromTjaFile(TjaFile *file, int level) {
  * @param level The desired course level.
  * @param fileDescriptor The file to perform the first pass on.
  */
-void performFirstPass(TjaData *data, int level, SceUID fileDescriptor) {
+void performFirstPass(TjaData *data, int level, FILE *fileDescriptor) {
     //TODO
     return;
 }
