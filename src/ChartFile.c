@@ -1,41 +1,43 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-#include "../include/Utils.h"
-#include "../include/TjaFile.h"
-#include "../include/Constants.h"
-#include "../include/Logger.h"
+#include "../include/ChartFile.h"
 #include "../include/SjisToUtf8.h"
 
-TjaFile *makeTjaFileInstance(char *filePath) {
-    TjaFile *result = NULL;
+#include <string.h>
+#include <stdlib.h>
+
+ChartFile *makeChartFileInstance(char *filePath, Genre *genre) {
+    ChartFile *result = NULL;
     FILE *fileDescriptor = fopen(filePath, "r");
     if (fileDescriptor) {
-        result = calloc(1, sizeof(TjaFile));
+        result = malloc(sizeof(ChartFile));
         if (result) {
+            memset(result, 0, sizeof(ChartFile));
+            result->genre = genre;
             result->filePath = strdup(filePath);
             parseFileHeader(fileDescriptor, result);
-        } else { writeToLogger("Error: couldn't allocate memory for TjaFile!"); }
+        }
         fclose(fileDescriptor);
-    } else {
-        writeToLogger("Error: couldn't open file for reading!");
     }
     return result;
 }
 
 /**
  * This function parses thea "header" parts of a TJA file, and
- * fills the required parts of the provided TjaFile instance.
+ * fills the required parts of the provided ChartFile instance.
  * @param fileDescriptor
- * @param tjaFile
+ * @param ChartFile
  */
-void parseFileHeader(FILE *fileDescriptor, TjaFile *tjaFile) {
-    static char buffer[BUFFER_SIZE];
-    while (fread(buffer, sizeof(char), sizeof(buffer), fileDescriptor) > 0) {
-        checkIfBufferEndsWithCourseAndReposition(fileDescriptor, buffer);
-        repositionToClosestLineReturn(fileDescriptor, buffer);
-        checkForMissingData(buffer, tjaFile);
+void parseFileHeader(FILE *fileDescriptor, ChartFile *ChartFile) {
+    char buffer[BUFFER_SIZE];
+    memset(buffer, 0, sizeof(buffer));
+    int readBytes = fread(buffer, sizeof(char), BYTES_TO_READ, fileDescriptor);
+    while (readBytes > 0) {
+        if (readBytes == BYTES_TO_READ) {
+            checkIfBufferEndsWithCourseAndReposition(fileDescriptor, buffer);
+            repositionToClosestLineReturn(fileDescriptor, buffer);
+        }
+        checkForMissingData(buffer, ChartFile);
+        memset(buffer, 0, sizeof(buffer));
+        readBytes = fread(buffer, sizeof(char), BYTES_TO_READ, fileDescriptor);
     }
 }
 
@@ -71,45 +73,48 @@ void checkIfBufferEndsWithCourseAndReposition(FILE *fileDescriptor, char *buffer
  * @param buffer The buffer that will be truncated.
  */
 void repositionToClosestLineReturn(FILE *fileDescriptor, char *buffer) {
-    char *lastNewLineChar = strrchr(buffer, '\n') + 1;
-    int charactersToGoBack = -strlen(lastNewLineChar);
-    fseek(fileDescriptor, charactersToGoBack, SEEK_CUR);
-    int nullTerminatorPosition = strlen(buffer) - strlen(lastNewLineChar);
-    buffer[nullTerminatorPosition] = '\0';
-}
-
-void checkForMissingData(const char *buffer, TjaFile *tjaFile) {
-    if (!tjaFile->title) { checkForStringTypeData(buffer, &tjaFile->title, TITLE_HEADER); }
-    if (!tjaFile->subtitle) { checkForStringTypeData(buffer, &tjaFile->subtitle, SUBTITLE_HEADER); }
-    if (!tjaFile->musicFile) { checkForStringTypeData(buffer, &tjaFile->musicFile, MUSIC_FILE_HEADER); }
-    if (!tjaFile->bpm) { checkForFloatTypeData(buffer, &tjaFile->bpm, BPM_HEADER); }
-    if (!tjaFile->musicVolume) { checkForIntTypeData(buffer, &tjaFile->musicVolume, SONGVOL_HEADER); }
-    if (!tjaFile->soundEffectVolume) { checkForIntTypeData(buffer, &tjaFile->soundEffectVolume, SEVOL_HEADER); }
-    if (!tjaFile->scoreMode) { checkForIntTypeData(buffer, &tjaFile->scoreMode, SCOREMODE_HEADER); }
-    if (!tjaFile->demoStart) { checkForFloatTypeData(buffer, &tjaFile->demoStart, DEMOSTART_HEADER); }
-    if (!tjaFile->offset) { checkForFloatTypeData(buffer, &tjaFile->offset, OFFSET_HEADER); }
-    checkForAnyLevelData(buffer, tjaFile);
-}
-
-void checkForIntTypeData(const char *buffer, int *result, const char *header) {
-    char *position = strstr(buffer, header);
-    if (position != NULL) {
-        position += strlen(header);
-        *result = strtol(position, NULL, 10);
+    char *lastNewLineChar = strrchr(buffer, '\n');
+    if (lastNewLineChar) {
+        //lastNewLineChar;
+        int charactersToGoBack = -strlen(lastNewLineChar);
+        fseek(fileDescriptor, charactersToGoBack, SEEK_CUR);
+        int nullTerminatorPosition = strlen(buffer) - strlen(lastNewLineChar);
+        buffer[nullTerminatorPosition] = '\0';
     }
 }
 
-void checkForFloatTypeData(const char *buffer, float *result, const char *header) {
-    char *position = strstr(buffer, header);
-    if (position != NULL) {
-        position += strlen(header);
-        *result = strtof(position, NULL);
-    }
+void checkForMissingData(const char *buffer, ChartFile *chartFile) {
+    if (!chartFile->title) { chartFile->title = checkForStringTypeData(buffer, TITLE_HEADER); }
+    if (!chartFile->subtitle) { chartFile->subtitle = checkForStringTypeData(buffer, SUBTITLE_HEADER); }
+    if (!chartFile->musicFile) { chartFile->musicFile = checkForStringTypeData(buffer, MUSIC_FILE_HEADER); }
+    if (!chartFile->demoStart) { chartFile->demoStart = checkForFloatTypeData(buffer, DEMOSTART_HEADER); }
+    checkForAnyLevelData(buffer, chartFile);
 }
 
-void checkForStringTypeData(const char *buffer, char **result, const char *header) {
+int checkForIntTypeData(const char *buffer, const char *header) {
     char *position = strstr(buffer, header);
-    if (position != NULL) {
+    int result = 0;
+    if (position) {
+        position += strlen(header);
+        result = strtol(position, NULL, 10);
+    }
+    return result;
+}
+
+float checkForFloatTypeData(const char *buffer, const char *header) {
+    char *position = strstr(buffer, header);
+    float result = 0.0f;
+    if (position) {
+        position += strlen(header);
+        result = strtof(position, NULL);
+    }
+    return result;
+}
+
+char *checkForStringTypeData(const char *buffer, const char *header) {
+    char *position = strstr(buffer, header);
+    char *result = NULL;
+    if (position) {
         position += strlen(header);
         size_t stringSizeLineFeed = strcspn(position, "\n");
         size_t stringSizeCarriageReturn = strcspn(position, "\r");
@@ -118,10 +123,11 @@ void checkForStringTypeData(const char *buffer, char **result, const char *heade
         if (string) {
             strncpy(string, position, stringSize);
             string[stringSize] = '\0';
-            *result = shiftJisToUtf8(string);
+            result = shiftJisToUtf8(string);
             free(string);
-        } else { writeToLogger("Error: couldn't allocate memory for music file name!");}
+        }
     }
+    return result;
 }
 
 /**
@@ -129,12 +135,12 @@ void checkForStringTypeData(const char *buffer, char **result, const char *heade
  * level for a given difficulty for a chart. If this is the case,
  * the diff_extreme member of the file parameter is set to the number found.
  * @param buffer The buffer to check.
- * @param file The TJAFile instance to write the difficulty level to.
+ * @param file The ChartFile instance to write the difficulty level to.
  *
  */
-void checkForLevelData(const char *buffer, TjaFile *file, const char *courseLevelHeader) {
+void checkForLevelData(const char *buffer, ChartFile *file, const char *courseLevelHeader) {
     char *position = strstr(buffer, courseLevelHeader);
-    if (position != NULL) {
+    if (position) {
         position += strlen(courseLevelHeader) + strlen(LEVEL_HEADER);
         if (!strcmp(courseLevelHeader, EDIT_LEVEL_HEADER)) { file->diffEdit = strtol(position, NULL, 10); }
         else if (!strcmp(courseLevelHeader, ONI_LEVEL_HEADER)) { file->diffOni = strtol(position, NULL, 10); }
@@ -146,11 +152,11 @@ void checkForLevelData(const char *buffer, TjaFile *file, const char *courseLeve
 
 /**
  * This function checks the buffer for any difficulty level that hasn't
- * been assigned yet in the TjaFile instance.
+ * been assigned yet in the ChartFile instance.
  * @param buffer The buffer to check.
- * @param file The instance of TjaFile to update if data is found.
+ * @param file The instance of ChartFile to update if data is found.
  */
-void checkForAnyLevelData(const char *buffer, TjaFile *file) {
+void checkForAnyLevelData(const char *buffer, ChartFile *file) {
     if (file->diffEdit == DATA_NOT_FOUND) { checkForLevelData(buffer, file, EDIT_LEVEL_HEADER); }
     if (file->diffOni == DATA_NOT_FOUND) { checkForLevelData(buffer, file, ONI_LEVEL_HEADER); }
     if (file->diffHard == DATA_NOT_FOUND) { checkForLevelData(buffer, file, HARD_LEVEL_HEADER); }
@@ -158,26 +164,18 @@ void checkForAnyLevelData(const char *buffer, TjaFile *file) {
     if (file->diffEasy == DATA_NOT_FOUND) { checkForLevelData(buffer, file, EASY_LEVEL_HEADER); }
 }
 
-void logTjaFile(TjaFile *tjaFile) {
-    static char buffer[512];
-    snprintf(buffer, 512, TJAFILE_SPRINTF_FORMAT, tjaFile->filePath, tjaFile->title, tjaFile->subtitle,
-             tjaFile->musicFile,
-             tjaFile->diffEasy, tjaFile->diffNormal, tjaFile->diffHard, tjaFile->diffOni, tjaFile->diffEdit,
-             tjaFile->bpm,
-             tjaFile->musicVolume, tjaFile->soundEffectVolume, tjaFile->scoreMode, tjaFile->subtitleEffect,
-             tjaFile->offset,
-             tjaFile->demoStart);
-    writeToLogger(buffer);
-}
-
 /**
- * Free all memory used by the instance of TjaFile passed as parameter.
- * @param file The instance of TjaFile to free.
+ * Free all memory used by the instance of ChartFile passed as parameter.
+ * @param file The instance of ChartFile to free.
  */
-void freeTjaFile(TjaFile *file) {
-    free(file->filePath);
-    free(file->musicFile);
-    free(file->title);
-    free(file->subtitle);
-    free(file);
+void freeChartFile(ChartFile *file) {
+    if (file) {
+        if (file->filePath) free(file->filePath);
+        if (file->musicFile) free(file->musicFile);
+        if (file->title) free(file->title);
+        if (file->subtitle) free(file->subtitle);
+        memset(file, 0, sizeof(ChartFile));
+        free(file);
+        file = NULL;
+    }
 }

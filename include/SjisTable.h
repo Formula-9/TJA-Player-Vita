@@ -1,8 +1,8 @@
-#ifndef TJA_PLAYER_VITA_SJISTABLE_H
-#define TJA_PLAYER_VITA_SJISTABLE_H
+#ifndef _SJISTABLE_H_
+#define _SJISTABLE_H_
 
-#include "Constants.h"
+#define SJIS_TABLE_SIZE   25088
 
 extern const unsigned char sjisTable[SJIS_TABLE_SIZE];
 
-#endif //TJA_PLAYER_VITA_SJISTABLE_H
+#endif //TJA_PLAYER_SJISTABLE_H_

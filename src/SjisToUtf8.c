@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../include/Logger.h"
 #include "../include/SjisTable.h"
 #include "../include/SjisToUtf8.h"
 
