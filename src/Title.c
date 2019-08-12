@@ -6,6 +6,7 @@
 #include <psp2/kernel/processmgr.h>
 #include <psp2/ctrl.h>
 #include <vita2d.h>
+#include <string.h>
 
 static int status = TITLE_STATUS_CONTINUE;
 static int selectedOption = TITLE_OPTION_PLAY;
@@ -14,12 +15,12 @@ static SceCtrlData ctrl;
 void prepareTitleData() {
     runChartFinderThread();
     int width, height, numberOfPoints = 0;
-    char str[15] = "Now Loading";
-    vita2d_font_text_dimensions(getFont(), GAME_FONT_SIZE, str, &width, &height);
+    char str[15];
+    vita2d_font_text_dimensions(getFont(), GAME_FONT_SIZE, TITLE_WAIT_MESSAGE_MAX_SIZE, &width, &height);
     while (!isChartFinderVitaThreadDone()) {
         updateNowLoadingText(str, &numberOfPoints);
         drawTextWhileWaitingForChartFinderThread(str, width, height);
-        sceKernelDelayThread(DEFAULT_DELAY);
+        sceKernelDelayThread(TITLE_WAIT_DELAY);
     }
 }
 
@@ -30,11 +31,11 @@ void prepareTitleData() {
  * @param numberOfPoints A pointer to the int variable containing the number of points.
  */
 void updateNowLoadingText(char *str, int *numberOfPoints) {
-    for (int i = 0; i < *numberOfPoints; i++) str[12 + i] = '.';
-    str[12 + *numberOfPoints] = '\0';
+    strcpy(str, TITLE_WAIT_MESSAGE);
+    for (int i = 0; i < *numberOfPoints; i++) strcat(str, ".");
 
     if (*numberOfPoints < 3) {
-        *numberOfPoints++;
+        (*numberOfPoints)++;
     } else {
         *numberOfPoints = 0;
     }
@@ -45,9 +46,9 @@ void updateNowLoadingText(char *str, int *numberOfPoints) {
  * message on screen after clearing it.
  */
 void drawTextWhileWaitingForChartFinderThread(char *str, int width, int height) {
-    vita2d_clear_screen();
     vita2d_start_drawing();
-    vita2d_font_draw_text(getFont(), (VITA_SCREEN_W / 2) - (width / 2), (VITA_SCREEN_H / 2) - (height / 2), RGBA8(255, 255, 255, 255), GAME_FONT_SIZE, str);
+    vita2d_clear_screen();
+    vita2d_font_draw_text(getFont(), (VITA_SCREEN_W / 2) - (width / 2), (VITA_SCREEN_H / 2) - (height / 2), RGBA8(255, 255, 255, 255), TITLE_WAIT_MESSAGE_FONT_SIZE, str);
     vita2d_end_drawing();
     vita2d_swap_buffers();
 }
@@ -61,6 +62,8 @@ void updateTitle() {
         titleHandleInput();
         vita2d_clear_screen();
         vita2d_start_drawing();
+
+        drawTitleOptions();
 
         vita2d_end_drawing();
         vita2d_swap_buffers();
@@ -78,6 +81,22 @@ void updateTitle() {
     }
 }
 
+void drawTitleOptions() {
+    char *options[] = {TITLE_PLAY_TEXT, TITLE_EXIT_TEXT};
+    int iterator = 0;
+    int optionsLength = sizeof(options)/sizeof(char*);
+    int width, height;
+    while (iterator < optionsLength) {
+        int positionX = (VITA_SCREEN_W / 2) - (width / 2);
+        int positionY = (VITA_SCREEN_H / 4) + (height * iterator);
+        vita2d_font_text_dimensions(getFont(), GAME_FONT_SIZE, options[iterator], &width, &height);
+        vita2d_font_draw_text(getFont(), positionX, positionY, RGBA8(255, 255, 255, 255), GAME_FONT_SIZE, options[iterator]);
+    }
+}
+
+/**
+ * Handles button presses.
+ */
 void titleHandleInput() {
     sceCtrlPeekBufferPositive(0, &ctrl, 1);
     if (ctrl.buttons == SCE_CTRL_DOWN) {
@@ -111,6 +130,10 @@ void decrementSelectedOption() {
     }
 }
 
+/**
+ * Called when Circle is pressed, used to confirm the selection and quit the
+ * main update loop for the Title Screen.
+ */
 void changeTitleStatus() {
     switch (selectedOption) {
         case (TITLE_OPTION_PLAY):
@@ -122,6 +145,9 @@ void changeTitleStatus() {
     }
 }
 
+/**
+ * Should be used to clean up anything that was alloc'd on the heap. 
+ */
 void destroyTitleData() {
 
 }

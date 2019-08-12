@@ -1,0 +1,15 @@
+# Binaries
+tjaplayervita
+tjaplayervita.self
+tjaplayervita.velf
+tjaplayervita.vpk
+tjaplayervita.vpk_param.sfo
+
+# CMake & Make
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# PS Vita Coredumps
+*.psp2dmp

@@ -4,7 +4,8 @@ A work-in-progress Taiko no Tatsujin Simulator for PlayStation Vita.
 ### Updates
 
 ***12/08/2019:*** Big rewrite, the application will still use Vita2D for rendering, and audio playback
-will be done with SDL2 (with Mixer).
+will be done with SDL2 (with Mixer). Also, chart search is done on start on another thread, which
+allows the main thread to display a "Now Loading" message on the screen!
 
 ### Notes
 In its current state, this application is not playable yet.

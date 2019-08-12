@@ -14,7 +14,7 @@
 #define INIT_RESULT_OK      0
 #define INIT_RESULT_FAIL    1
 
-#define GAME_FONT_FILE      "font.ttf"
+#define GAME_FONT_FILE      "ux0:/data/tjapvita/res/font.ttf"
 #define GAME_FONT_SIZE      24
 
 #define DEFAULT_DELAY       16600
@@ -25,6 +25,8 @@ int initSDLMixer();
 int loadCommonResources();
 void destroyCommonResources();
 void quitGame();
+void registerNextState(int newState);
+void handleNextState();
 vita2d_font *getFont();
 
 #endif //_GAME_H_

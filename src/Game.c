@@ -2,13 +2,22 @@
 #include <psp2/ctrl.h>
 #include <SDL/SDL.h>
 
+// Core
 #include "../include/Game.h"
-#include "../include/Title.h"
 #include "../include/ChartFinder.h"
 #include "../include/Log.h"
 
-static vita2d_font *font = NULL;
+// States
+#include "../include/State.h"
+#include "../include/Title.h"
 
+static vita2d_font *font = NULL;
+static int nextState = STATE_ID_NO_STATE;
+
+/**
+ * Try to initialize all the subsystems needed by the application.
+ * @return INIT_RESULT_OK if the application started correctly, INIT_RESULT_FAIL on failure.
+ */
 int startGame() {
     int startResult = INIT_RESULT_OK;
     int continueInit = 1;
@@ -64,6 +73,10 @@ int initSDLMixer() {
 int loadCommonResources() {
     int initResult = INIT_RESULT_OK;
     font = vita2d_load_font_file(GAME_FONT_FILE);
+    if (!font) {
+        initResult = INIT_RESULT_FAIL;
+        printfToFile("Couldn't read font file at path: %s\n", GAME_FONT_FILE);
+    }
     return initResult;
 }
 
@@ -87,6 +100,30 @@ void quitGame() {
     vita2d_fini();
 }
 
+/**
+ * Register the state ID of the state to execute once the current one ends.
+ * @param newState The ID of the state to execute after the current one.
+ */
+void registerNextState(int newState) {
+    nextState = newState;
+}
+
+/**
+ * Used to jump between states.
+ */
+void handleNextState() {
+    void (*stateEntryFunc[])() = { prepareTitleData };
+    int currentState;
+    while (nextState != STATE_ID_NO_STATE) {
+        currentState = nextState;
+        nextState = STATE_ID_NO_STATE;
+        (*stateEntryFunc[currentState])();
+    }
+}
+
+/**
+ * Return the font used by the application.
+ */
 vita2d_font *getFont() {
     return font;
 }
