@@ -13,3 +13,6 @@ Makefile
 
 # PS Vita Coredumps
 *.psp2dmp
+
+# Visual Studio Code / IDE files
+.vscode

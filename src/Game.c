@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <psp2/ctrl.h>
 #include <SDL/SDL.h>
 
 // Core
@@ -10,6 +9,7 @@
 // States
 #include "../include/State.h"
 #include "../include/Title.h"
+#include "../include/SongSelect.h"
 
 static vita2d_font *font = NULL;
 static int nextState = STATE_ID_NO_STATE;
@@ -112,7 +112,7 @@ void registerNextState(int newState) {
  * Used to jump between states.
  */
 void handleNextState() {
-    void (*stateEntryFunc[])() = { prepareTitleData };
+    void (*stateEntryFunc[])() = { prepareTitleData, prepareSongSelectData };
     int currentState;
     while (nextState != STATE_ID_NO_STATE) {
         currentState = nextState;

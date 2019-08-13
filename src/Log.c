@@ -1,28 +1,42 @@
 #include "../include/Log.h"
 
 #include <stdio.h>
+#include <string.h>
 
 static FILE *log = NULL;
 
+/**
+ * Tries to open the log file for writing.
+ */
 void openLogFile() {
     log = fopen("ux0:/data/tjapvita/log.txt", "w");
 }
 
+/**
+ * Write a simple string to the file.
+ */
 void writeStringToFile(const char *str) {
     if (log && str) {
-        fprintf(log, str);
+        printfToFile(str);
     }
 }
 
+/**
+ * Write a message to the file, using fprintf.
+ */
 void printfToFile(const char *fmt, ...) {
     if (log) {
         va_list va;
         va_start(va, fmt);
         fprintf(log, fmt, va);
         va_end(va);
+        fflush(log);
     }
 }
 
+/**
+ * Write to the file data about all found charts.
+ */
 void writeChartLinkedListToFile() {
     if (log) {
         ChartNode *chartList = getChartLinkedListHead();
@@ -34,9 +48,13 @@ void writeChartLinkedListToFile() {
                                                        chart->diffHard, chart->diffOni, chart->diffEdit);
             chartList = chartList->next;
         }
+        fflush(log);
     }   
 }
 
+/**
+ * Close the log file.
+ */
 void closeLogFile() {
     if (log) {
         fclose(log);

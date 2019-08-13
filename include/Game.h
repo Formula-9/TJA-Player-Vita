@@ -4,6 +4,7 @@
 #include <vita2d.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#include <psp2/ctrl.h>
 
 #define VITA_SCREEN_W       960
 #define VITA_SCREEN_H       544
